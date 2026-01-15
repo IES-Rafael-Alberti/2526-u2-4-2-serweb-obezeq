@@ -1,0 +1,25 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx-server
+    network_mode: host
+    volumes:
+      - ./web/html:/usr/share/nginx/html
+      - ./web/reloj:/usr/share/nginx/html/reloj
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    restart: unless-stopped
+
+  sftp:
+    image: linuxserver/openssh-server
+    container_name: sftp-server
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - USER_NAME=usuario
+      - USER_PASSWORD=password
+      - PASSWORD_ACCESS=true
+    volumes:
+      - ./web:/config/web
+    restart: unless-stopped
