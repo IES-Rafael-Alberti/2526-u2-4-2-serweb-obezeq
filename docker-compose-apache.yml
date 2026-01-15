@@ -1,0 +1,26 @@
+services:
+  apache:
+    image: httpd:latest
+    container_name: apache-server
+    network_mode: host
+    volumes:
+      - ./web/html:/usr/local/apache2/htdocs
+      - ./web/reloj:/usr/local/apache2/htdocs/reloj
+      - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./apache/httpd-ssl.conf:/usr/local/apache2/conf/extra/httpd-ssl.conf:ro
+      - ./certs:/usr/local/apache2/conf/certs:ro
+    restart: unless-stopped
+
+  sftp:
+    image: linuxserver/openssh-server
+    container_name: sftp-server
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - USER_NAME=usuario
+      - USER_PASSWORD=password
+      - PASSWORD_ACCESS=true
+    volumes:
+      - ./web:/config/web
+    restart: unless-stopped
